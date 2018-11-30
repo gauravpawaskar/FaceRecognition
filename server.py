@@ -7,17 +7,13 @@ import json
 import face_recognition
 import numpy as np
 import os
-import sqlite3
-from sqlite3 import Error
-#from jinja2 import
+#import sqlite3
+#from sqlite3 import Error
+import mysql.connector
 
-database = "student.db"
+#database = "student.db"
 
-def get_db():
-    db = getattr(g, '_database', None)
-    if db is None:
-        db = g._database = sqlite3.connect(database)
-    return db
+db = mysql.connector.connect(user='root', password='root', host='127.0.0.1', database='student', buffered=True)
 
 app = Flask(__name__)
 
@@ -36,31 +32,37 @@ def hello():
 def enroll():
   image = []
   req_data = request.get_json()
-  cur = get_db().cursor()
-  try:
-    res = cur.execute("INSERT INTO student (rn, fname, lname, image, class) values (?,?,?,?,?)", 
-    (int(req_data["roll"]), req_data["fname"], req_data["lname"], json.dumps(np.asarray(req_data["image"]).tolist()) , req_data["class"]))
-    print cur.lastrowid
-    get_db().commit()
-  except Error as e:
-    print e
+  cur = db.cursor()
+  sql = "INSERT INTO student (rn, fname, lname, image, class) VALUES (%s,%s,%s,%s,%s)"
+  values = (int(req_data["roll"]), req_data["fname"], req_data["lname"], json.dumps(np.asarray(req_data["image"]).tolist()) , req_data["class"])
+  print values
+  #try:
+  res = cur.execute(sql, values)
+  print cur.lastrowid
+  db.commit()
+  #except Exception as e:
+   # print e
   return "ok"
   
 @app.route("/getclass", methods=["GET"])
 def getClass():
-  cur = get_db().cursor()
-  cls = request.args.get("class")
-  res = cur.execute("SELECT * FROM student WHERE class = ?", (cls,))
+  cur = db.cursor(buffered=True,dictionary=True)
+  className = request.args.get("class").encode('ascii','ignore')
+  sql = "SELECT * FROM student WHERE class = %s"
+  values = (className,)
+  #print sql, values
+  cur.execute(sql, values)
   sendRes = []
-  rows = res.fetchall()
+  rows = cur.fetchall()
   for row in rows:
-	  data = {
-	  "roll" : row[0],
-	  "fname" : row[1],
-	  "lname" : row[2],
-	  "image" : row[3]
+    #print row["lname"]
+    data = {
+	    "roll" : row["rn"],
+	    "fname" : row["fname"],
+	    "lname" : row["lname"],
+	    "image" : row["image"].decode("utf-8")
 	  }
-	  sendRes.append(data)
+    sendRes.append(data)
   return json.dumps(sendRes)
 
 if __name__ == "__main__":
