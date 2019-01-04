@@ -8,6 +8,7 @@ import face_recognition
 import numpy as np
 import os
 import mysql.connector
+from datetime import datetime
 
 db = mysql.connector.connect(user='root', password='root', host='127.0.0.1', database='student', buffered=True)
 
@@ -35,6 +36,14 @@ def enroll():
   print cur.lastrowid
   db.commit()
   return "ok"
+
+@app.route("/createlecture", methods=["POST"])
+def createLecture():
+  req_data = request.get_json()
+  cur = db.cursor()
+  tsStart = req_data["timeStart"]
+  tsEnd = req_data["timeEnd"]
+
   
 @app.route("/getclass", methods=["GET"])
 def getClass():
