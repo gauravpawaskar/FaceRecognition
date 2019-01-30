@@ -4,6 +4,8 @@ mysql>create table attend (rn INT not null, class varchar(100) NOT NULL, time da
 
 mysql>CREATE TABLE student (rn INT PRIMARY KEY, fname VARCHAR(100) NOT NULL, lname VARCHAR(100) NOT NULL, image BLOB NOT NULL, class VARCHAR(100) NOT NULL);
 
+mysql>create table lectures (lectureName varchar(100), class varchar(100), startTime datetime, endTime datetime);
+
 Start Server
 >sudo python server.py
 
