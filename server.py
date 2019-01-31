@@ -41,8 +41,17 @@ def enroll():
 def createLecture():
   req_data = request.get_json()
   cur = db.cursor()
-  tsStart = req_data["timeStart"]
-  tsEnd = req_data["timeEnd"]
+  tsStart = req_data["startTime"]
+  tsEnd = req_data["endTime"]
+  name = req_data["name"]
+  classNum = req_data["class"]
+  print tsStart, tsEnd, name, classNum
+  cur = db.cursor()
+  sql = "INSERT INTO lectures (class, lectureName, startTime, endTime) VALUES (%s, %s, %s, %s)"
+  values = (classNum, name, tsStart, tsEnd)
+  res = cur.execute(sql, values)
+  db.commit()
+  return "ok"
 
   
 @app.route("/getclass", methods=["GET"])

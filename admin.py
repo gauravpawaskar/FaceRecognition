@@ -82,7 +82,19 @@ class createClass:
     self.frame.grid(row=2,column=2)
 
   def add_class(self):
-    print "click"
+    headers = {"Content-Type": "application/json"}
+    startTime  = self.textYear.get("1.0","end-1c")+"-"+self.textMonth.get("1.0","end-1c")+"-"+self.textDay.get("1.0","end-1c")+" "+self.textStartHour.get("1.0","end-1c")+":"+self.textStartMin.get("1.0","end-1c")+":00"
+    endTime  = self.textYear.get("1.0","end-1c")+"-"+self.textMonth.get("1.0","end-1c")+"-"+self.textDay.get("1.0","end-1c")+" "+self.textEndHour.get("1.0","end-1c")+":"+self.textEndMin.get("1.0","end-1c")+":00"
+    data = {
+    "name" : self.textLectName.get("1.0","end-1c"), 
+    "class" : self.textClass.get("1.0","end-1c"), 
+    "startTime" : startTime,
+    "endTime"  : endTime
+    }
+    URL = "http://localhost/createlecture"
+    res = requests.post(url=URL, data=json.dumps(data), headers=headers)
+    if res.status_code == 200:
+      showinfo("Window", res.text)
 
   def close_windows(self):
     self.master.destroy()
