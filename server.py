@@ -73,6 +73,25 @@ def getClass():
     sendRes.append(data)
   return json.dumps(sendRes)
 
+@app.route("/getattendance", methods=["GET"])
+def getattendance():
+  cur = db.cursor(buffered=True,dictionary=True)
+  className = request.args.get("class").encode('ascii','ignore')
+  startTime = request.args.get("starttime").encode('ascii','ignore')
+  sql = "SELECT rn, fname, lname, class from student where rn in (select rn from lectures, attend where lectures.class = %s and lectures.startTime = %s)"
+  values = (className, startTime,)
+  cur.execute(sql, values)
+  sendRes = []
+  rows = cur.fetchall()
+  for row in rows:
+    data = {
+      "roll" : row["rn"],
+      "fname" : row["fname"],
+      "lname" : row["lname"]
+    }
+    sendRes.append(data)
+  return json.dumps(sendRes)
+
 @app.route("/attend", methods=["POST"])
 def attend():
   req_data = request.get_json()
