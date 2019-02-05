@@ -15,9 +15,11 @@ class Home:
     self.frame = tk.Frame(self.master)
     self.button1 = tk.Button(self.frame, text = 'Enroll', width = 25, command = self.new_window)
     self.button2 = tk.Button(self.frame, text = 'Create Lecture', width = 25, command = self.create_class)
+    self.button3 = tk.Button(self.frame, text = 'See Attendance', width = 25, command = self.see_attend)
     self.quitButton = tk.Button(self.frame, text = 'Quit', width = 25, command = self.close_windows)
     self.button1.pack()
     self.button2.pack()
+    self.button3.pack()
     self.quitButton.pack()
     self.frame.pack()
 
@@ -28,6 +30,87 @@ class Home:
   def create_class(self):
     self.newWindow = tk.Toplevel(self.master)
     self.app = createClass(self.newWindow)
+
+  def see_attend(self):
+    self.newWindow = tk.Toplevel(self.master)
+    self.app = seeAttend(self.newWindow)
+
+  def close_windows(self):
+    self.master.destroy()
+
+class seeAttend:
+  def __init__(self, master, output_path = "./"):
+    self.master = master
+    self.frame = tk.Frame(self.master)
+    self.master.title("See Attendance")
+    self.panel = tk.Label(self.master)
+    self.panel.grid(row=1, column=2, columnspan=2)
+    self.labelClass = tk.Label(self.frame, text="Class")
+    self.labelClass.grid(row=2,column=1)
+    self.textClass = tk.Text(self.frame, height=1, width=25)
+    self.textClass.grid(row=2,column=2)
+    self.labelYear = tk.Label(self.frame, text="Year")
+    self.labelYear.grid(row=3,column=1)
+    self.textYear = tk.Text(self.frame, height=1, width=25)
+    self.textYear.grid(row=3,column=2)
+    self.labelMonth = tk.Label(self.frame, text="Month")
+    self.labelMonth.grid(row=4,column=1)
+    self.textMonth = tk.Text(self.frame, height=1, width=25)
+    self.textMonth.grid(row=4,column=2)
+    self.labelDay = tk.Label(self.frame, text="Day")
+    self.labelDay.grid(row=5,column=1)
+    self.textDay = tk.Text(self.frame, height=1, width=25)
+    self.textDay.grid(row=5,column=2)
+    self.labelStartHour = tk.Label(self.frame, text="Start Hour")
+    self.labelStartHour.grid(row=6,column=1)
+    self.textStartHour = tk.Text(self.frame, height=1, width=25)
+    self.textStartHour.grid(row=6,column=2)
+    self.labelStartMin = tk.Label(self.frame, text="Start Min")
+    self.labelStartMin.grid(row=7,column=1)
+    self.textStartMin = tk.Text(self.frame, height=1, width=25)
+    self.textStartMin.grid(row=7,column=2)
+    self.btn = tk.Button(self.frame, text="See Attendance", width = 25, command=self.see_attendance)
+    self.btn.grid(row=8,column=1)
+    self.quitButton = tk.Button(self.frame, text = 'Quit', width = 25, command = self.close_windows)
+    self.quitButton.grid(row=8,column=2)
+    self.frame.grid(row=2,column=2)
+
+  def see_attendance(self):
+    startTime  = self.textYear.get("1.0","end-1c")+"-"+self.textMonth.get("1.0","end-1c")+"-"+self.textDay.get("1.0","end-1c")+" "+self.textStartHour.get("1.0","end-1c")+":"+self.textStartMin.get("1.0","end-1c")+":00"
+    URL = "http://localhost/getattendance?class="+self.textClass.get("1.0","end-1c")+"&starttime="+startTime
+    res = requests.get(url=URL)
+    if res.status_code == 200:
+      #print res.text
+      self.newWindow = tk.Toplevel(self.master)
+      self.app = listAttend(self.newWindow, data=res.text)
+      #showinfo("Window", res.text)
+
+  def close_windows(self):
+    self.master.destroy()
+
+class listAttend:
+  def __init__(self, master, data, output_path = "./"):
+    self.master = master
+    self.frame = tk.Frame(self.master)
+    self.master.title("See Attendance")
+    self.panel = tk.Label(self.master)
+    self.panel.grid(row=1, column=2, columnspan=3)
+    #print data
+    row = 2
+    for item in json.loads(data):
+      print item
+      self.labelLname = tk.Label(self.frame, text=item["roll"])
+      self.labelLname.grid(row=row,column=1)
+      self.labelLname = tk.Label(self.frame, text=item["fname"])
+      self.labelLname.grid(row=row,column=2)
+      self.labelLname = tk.Label(self.frame, text=item["lname"])
+      self.labelLname.grid(row=row,column=3)
+      row = row + 1
+
+
+    self.quitButton = tk.Button(self.frame, text = 'Quit', width = 25, command = self.close_windows)
+    self.quitButton.grid(row=row,column=2)
+    self.frame.grid(row=2,column=2)
 
   def close_windows(self):
     self.master.destroy()
