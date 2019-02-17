@@ -78,7 +78,7 @@ def getattendance():
   cur = db.cursor(buffered=True,dictionary=True)
   className = request.args.get("class").encode('ascii','ignore')
   startTime = request.args.get("starttime").encode('ascii','ignore')
-  sql = "SELECT rn, fname, lname, class from student where rn in (select rn from lectures, attend where lectures.class = %s and lectures.startTime = %s)"
+  sql = "SELECT rn, fname, lname, class from student where rn in (select rn from lectures, attend where lectures.class = %s and lectures.startTime = %s and attend.time >= lectures.startTime and attend.time < lectures.endTime)"
   values = (className, startTime,)
   cur.execute(sql, values)
   sendRes = []
