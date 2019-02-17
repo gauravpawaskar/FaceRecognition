@@ -4,7 +4,6 @@ from flask import Flask, render_template
 from flask import request
 from flask import g
 import json
-import face_recognition
 import numpy as np
 import os
 import mysql.connector
