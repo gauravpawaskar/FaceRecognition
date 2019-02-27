@@ -239,6 +239,8 @@ class Enroll:
     URL = "http://localhost/enroll"
     res = requests.post(url=URL, data=json.dumps(enrollData), headers=headers)
     if res.status_code == 200:
+      self.close_windows()
+    else:
       showinfo("Window", res.text)
 
   def close_windows(self):
