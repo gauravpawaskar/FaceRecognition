@@ -53,7 +53,7 @@ class Detect:
         self.FNames.append(record["fname"])
         self.LNames.append(record["lname"])
         self.Rolls.append(record["roll"])
-    
+    #Change this if camera not found
     self.master.vs = cv2.VideoCapture(0)
     self.master.current_image = None
     self.panel = tk.Label(self.master)
