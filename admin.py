@@ -95,9 +95,20 @@ class listAttend:
     self.master.title("See Attendance")
     self.panel = tk.Label(self.master)
     self.panel.grid(row=1, column=2, columnspan=3)
+    fullData = json.loads(data)
+    self.labelPresent = tk.Label(self.frame, text="Present")
+    self.labelPresent.grid(row=2, column=1, columnspan=2)
+    self.labelPresentText = tk.Label(self.frame, text=fullData["present"])
+    self.labelPresentText.grid(row=2, column=3)
+    self.labelTotal= tk.Label(self.frame, text="Total")
+    self.labelTotal.grid(row=3, column=1, columnspan=2)
+    self.labelTotalText = tk.Label(self.frame, text=fullData["total"])
+    self.labelTotalText.grid(row=3, column=3)
+    self.emptyLabel = tk.Label(self.frame, text="")
+    self.emptyLabel.grid(row=4, column=2, columnspan=3)
     #print data
-    row = 2
-    for item in json.loads(data):
+    row = 5
+    for item in fullData["students"]:
       print item
       self.labelLname = tk.Label(self.frame, text=item["roll"])
       self.labelLname.grid(row=row,column=1)
@@ -110,7 +121,7 @@ class listAttend:
 
     self.quitButton = tk.Button(self.frame, text = 'Quit', width = 25, command = self.close_windows)
     self.quitButton.grid(row=row,column=2)
-    self.frame.grid(row=2,column=2)
+    self.frame.grid(row=row,column=3)
 
   def close_windows(self):
     self.master.destroy()

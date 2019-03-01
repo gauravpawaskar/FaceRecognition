@@ -80,7 +80,8 @@ def getattendance():
   sql = "SELECT rn, fname, lname, class from student where rn in (select rn from lectures, attend where lectures.class = %s and lectures.startTime = %s and attend.time >= lectures.startTime and attend.time < lectures.endTime)"
   values = (className, startTime,)
   cur.execute(sql, values)
-  sendRes = []
+  students = []
+  present = 0
   rows = cur.fetchall()
   for row in rows:
     data = {
@@ -88,7 +89,19 @@ def getattendance():
       "fname" : row["fname"],
       "lname" : row["lname"]
     }
-    sendRes.append(data)
+    present = present + 1
+    students.append(data)
+  
+  sql = "SELECT count(*) as count from student where class = %s"
+  values = (className,)
+  cur.execute(sql,values)
+  total = cur.fetchone()["count"]
+
+  sendRes = {
+    "students" : students,
+    "total" : total,
+    "present" : present
+  }
   return json.dumps(sendRes)
 
 @app.route("/attend", methods=["POST"])
