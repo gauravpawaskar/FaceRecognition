@@ -77,9 +77,13 @@ class Detect:
       matchLoc = face_recognition.face_locations(self.cv2image)
       matchEncodes = face_recognition.face_encodings(self.cv2image, matchLoc)
       for matchEncode in matchEncodes:
-        matches = face_recognition.compare_faces(self.knownFaceEncode, matchEncode)
+        matches = face_recognition.compare_faces(self.knownFaceEncode, matchEncode, tolerance=0.5)
         if True in matches:
+          #print self.knownFaceEncode
+          #print matchEncode
+          #print matches
           first_match_index = matches.index(True)
+          #self.current_image.save("save"+str(self.Rolls[first_match_index])+".png")
           URL = "http://localhost/attend"
           headers = {"Content-Type": "application/json"}
           data = {

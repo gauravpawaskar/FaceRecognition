@@ -237,6 +237,9 @@ class Enroll:
     self.master.after(1, self.video_loop)
 
   def take_snapshot(self):
+    self.current_image.save("click.png")
+    #print self.current_image
+    #print self.cv2image
     matchLoc = face_recognition.face_locations(self.cv2image)
     matchEncodes = face_recognition.face_encodings(self.cv2image, matchLoc)
     headers = {"Content-Type": "application/json"}
